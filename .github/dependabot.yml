@@ -1,0 +1,18 @@
+version: 2
+updates:
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: daily
+  commit-message:
+    prefix: ""
+  reviewers:
+  - Gchbg
+- package-ecosystem: docker
+  directory: /
+  schedule:
+    interval: daily
+  commit-message:
+    prefix: ""
+  reviewers:
+  - Gchbg
