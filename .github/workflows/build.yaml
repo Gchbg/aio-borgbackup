@@ -1,0 +1,38 @@
+name: Build Docker image
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Extract image tag
+      id: tag
+      run: printf 'tag=%s' "$(gawk 'match($0, /^FROM nextcloud\/aio-borgbackup:(.+)$/, a) {print a[1]}' Dockerfile)" >> "$GITHUB_OUTPUT"
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: arm64,amd64
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Log in to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and push image
+      uses: docker/build-push-action@v5
+      with:
+        platforms: linux/arm64,linux/amd64
+        tags: ghcr.io/gchbg/aio-borgbackup:${{ steps.tag.outputs.tag }},ghcr.io/gchbg/aio-borgbackup:latest
+        push: true
