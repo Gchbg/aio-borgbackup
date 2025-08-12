@@ -14,7 +14,7 @@ jobs:
       packages: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Extract image tag
       id: tag
       run: printf 'tag=%s' "$(gawk 'match($0, /^FROM nextcloud\/aio-borgbackup:(.+)$/, a) {print a[1]}' Dockerfile)" >> "$GITHUB_OUTPUT"
